@@ -4,14 +4,6 @@
       <input type="text" class="text-input" placeholder="请输入证书编号：" v-model="id">
       <button @click="searchId" class="search-btn search-id">查询</button>
     </section>
-    <section class="search">
-      <input type="text" class="half-text-input" placeholder="姓：" v-model="lastName">
-      <span class="half-text-input-separator" />
-      <input type="text" class="half-text-input" placeholder="名：" v-model="firstName">
-      <input type="text" class="text-input" placeholder="请输入主题：" v-model="subject">
-      <input type="date" class="text-input date-input" placeholder="获得时间：" v-model="issueDate">
-      <button @click="searchName" class="search-btn search-name">查询</button>
-    </section>
   </div>
 </template>
 
