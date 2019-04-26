@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios from 'axios'
 
-const rootUrl = "/photos";
+const rootUrl = '/photos'
 
 const actions = {
-  get: query => axios.get(`${rootUrl}/${query}`)
-};
+  get: (query) => axios.get(`${rootUrl}/${query}`)
+}
 
-export default actions;
+export default actions
