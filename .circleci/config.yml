@@ -43,7 +43,9 @@ jobs:
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
           # taken to be the root directory of the workspace.
-          root: dist
+          root: ~/repo
+          paths:
+            - dist
 workflows:
   build-and-deploy:
     jobs:
@@ -53,7 +55,7 @@ workflows:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
-          attach_workspace: true
+          attach-workspace: true
           requires:
             - build
       - aws-ecs/deploy-service-update:
