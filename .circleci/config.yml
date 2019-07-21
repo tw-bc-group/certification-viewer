@@ -3,26 +3,9 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
-
-workflows:
-  orbs:
-    aws-ecr: circleci/aws-ecr@6.1.0
-    aws-ecs: circleci/aws-ecs@0.0.8
-  build-and-deploy:
-    jobs:
-      - build 
-      - aws-ecr/build_and_push_image:
-          account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.cn'
-          repo: '${AWS_RESOURCE_NAME_PREFIX}'
-          region: '${AWS_DEFAULT_REGION}'
-          tag: '${CIRCLE_SHA1}'
-      - aws-ecs/deploy-service-update:
-          requires:
-            - aws-ecr/build_and_push_image
-          family: '${AWS_RESOURCE_NAME_PREFIX}-service'
-          cluster-name: '${AWS_RESOURCE_NAME_PREFIX}-cluster'
-          container-image-name-updates: 'container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}'
-
+orbs:
+  aws-ecr: circleci/aws-ecr@6.1.0
+  aws-ecs: circleci/aws-ecs@0.0.8
 jobs:
   build:
     docker:
@@ -55,3 +38,18 @@ jobs:
 
       # run tests!
       - run: yarn lint
+workflows:
+  build-and-deploy:
+    jobs:
+      - build 
+      - aws-ecr/build_and_push_image:
+          account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.cn'
+          repo: '${AWS_RESOURCE_NAME_PREFIX}'
+          region: '${AWS_DEFAULT_REGION}'
+          tag: '${CIRCLE_SHA1}'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build_and_push_image
+          family: '${AWS_RESOURCE_NAME_PREFIX}-service'
+          cluster-name: '${AWS_RESOURCE_NAME_PREFIX}-cluster'
+          container-image-name-updates: 'container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}'
