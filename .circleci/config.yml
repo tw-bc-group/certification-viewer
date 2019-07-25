@@ -68,6 +68,6 @@ workflows:
           attach-workspace: true
           requires:
             - build
-      - deploy
-        requires:
-          - aws-ecr/build-and-push-image
+      - deploy:
+          requires:
+            - aws-ecr/build-and-push-image
