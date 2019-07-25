@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const rootUrl = 'https://cac.thoughtworks.cn:3000/photos'
+const rootUrl = '/photos'
 
 const actions = {
   get: (query) => axios.get(`${rootUrl}/${query}`)
