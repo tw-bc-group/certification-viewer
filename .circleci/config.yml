@@ -5,7 +5,7 @@
 version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.1.0
-  aws-ecs: circleci/aws-ecs@0.0.8
+  aws-cli: circleci/aws-cli@0.1.13
 jobs:
   build:
     docker:
@@ -41,27 +41,28 @@ jobs:
       # run build!
       - run: yarn build
       - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
           root: ~/repo
           paths:
             - dist
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - aws-cli/install
+      - run: aws ssm send-command --instance-ids "i-03aa0fbc7e233d6c4" --document-name "AWS-RunShellScript" --parameters commands=["docker ps"]
+
 workflows:
   build-and-deploy:
     jobs:
-      - build 
+      - build
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          repo: "${AWS_RESOURCE_NAME_PREFIX_CERTIFICATION_VIEWER}"
           tag: "${CIRCLE_SHA1}"
           attach-workspace: true
           requires:
             - build
-      - aws-ecs/deploy-service-update:
-          requires:
-            - aws-ecr/build-and-push-image
-          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
-          aws-region: "${AWS_DEFAULT_REGION}"
-          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
-          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}"
+      - deploy
