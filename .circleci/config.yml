@@ -51,10 +51,7 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - aws-cli/install
-      - run: aws ssm send-command \
-          --document-name "AWS-RunShellScript" \
-          --instance-ids "i-03aa0fbc7e233d6c4" \
-          --parameters commands=["docker pull ${AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME}/${AWS_RESOURCE_NAME_PREFIX_CERTIFICATION_VIEWER}/${CIRCLE_SHA1}"] \
+      - run: aws ssm send-command --document-name "AWS-RunShellScript" --instance-ids "i-03aa0fbc7e233d6c4" --parameters commands=["docker pull ${AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME}/${AWS_RESOURCE_NAME_PREFIX_CERTIFICATION_VIEWER}/${CIRCLE_SHA1}"]
 
 workflows:
   build-and-deploy:
