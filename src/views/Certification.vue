@@ -20,7 +20,7 @@
 </style>
 
 <script>
-import actions from '../api'
+import AV from 'leancloud-storage'
 import { logo } from '../constant'
 
 export default {
@@ -33,8 +33,11 @@ export default {
     }
   },
   created () {
-    actions.get(this.$route.params.id).then(d => {
-      this.backgroundImage = d.data.png.url
+    const query = new AV.Query('Photo')
+    query.equalTo('certId', this.$route.params.id)
+    query.include(['svg'])
+    query.find().then(d => {
+      this.backgroundImage = d[0].get('svg').get('url')
     }, err => {
       console.error(err)
       this.backgroundImage = logo
